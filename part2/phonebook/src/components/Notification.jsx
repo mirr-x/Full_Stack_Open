@@ -1,20 +1,31 @@
-const Notification = ({ message }) => {
-	if (!message) {
+const Notification = ({ notification }) => {
+	if (!notification) {
 		return null
 	}
 
-	return <div style={styles.notification}>{message}</div>
+	return (
+		<div style={{ ...styles.notification, ...styles[notification.type] }}>
+			{notification.message}
+		</div>
+	)
 }
 
 const styles = {
 	notification: {
 		margin: '1rem 0',
 		padding: '0.75rem 1rem',
-		border: '3px solid #008000',
+		border: '3px solid',
 		borderRadius: '0.25rem',
-		color: '#008000',
 		backgroundColor: '#d3d3d3',
 		fontSize: '1.25rem',
+	},
+	success: {
+		borderColor: '#008000',
+		color: '#008000',
+	},
+	error: {
+		borderColor: '#cc0000',
+		color: '#cc0000',
 	},
 }
 

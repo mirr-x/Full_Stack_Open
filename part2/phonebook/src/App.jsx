@@ -12,8 +12,8 @@ const App = () => {
   const [nameFilted, setNameFilted] = useState('')
   const [notification, setNotification] = useState(null)
 
-  const showNotification = (message) => {
-    setNotification(message)
+  const showNotification = (message, type) => {
+    setNotification({ message, type })
   }
 
   useEffect(() => {
@@ -37,7 +37,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
-      <Notification message={notification} />
+      <Notification notification={notification} />
       <Filter
         persons={persons}
         nameFilted={nameFilted}

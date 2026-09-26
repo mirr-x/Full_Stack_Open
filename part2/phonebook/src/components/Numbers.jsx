@@ -12,7 +12,15 @@ const Numbers = ({ persons, setPersons, personsService, showNotification }) => (
 						setPersons((currentPersons) => currentPersons.filter(
 							(personToKeep) => personToKeep.id !== person.id,
 						))
-						showNotification(`Deleted ${person.name}`)
+						showNotification(`Deleted ${person.name}`, 'success')
+					}).catch(() => {
+						setPersons((currentPersons) => currentPersons.filter(
+							(personToKeep) => personToKeep.id !== person.id,
+						))
+						showNotification(
+							`Information of ${person.name} has already been removed from server`,
+							'error',
+						)
 					})
 				}}>delete</button>
 			</p>
