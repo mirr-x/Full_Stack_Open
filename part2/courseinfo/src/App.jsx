@@ -1,4 +1,7 @@
-import { useState } from 'react'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+
+const baseUrl = 'https://legendary-orbit-4pp54x54xgvcx4r-3001.app.github.dev/persons'
 
 const Filter = ({ value, onChange }) => (
   <div>
@@ -37,15 +40,16 @@ const Persons = ({ persons }) => (
 )
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 },
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    axios.get(baseUrl).then((response) => {
+      setPersons(response.data)
+    })
+  }, [])
 
   const addPerson = (event) => {
     event.preventDefault()
