@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
-const baseUrl = 'https://legendary-orbit-4pp54x54xgvcx4r-3001.app.github.dev/persons'
+const baseUrl = 'http://localhost:3001/persons'
 
 const Filter = ({ value, onChange }) => (
   <div>
