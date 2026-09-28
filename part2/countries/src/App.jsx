@@ -22,7 +22,7 @@ const Country = ({ country }) => {
     return (
         <li>
             {country.name.common}
-            <button onClick={() => }> Show </button>
+            {/* <button onClick={() => }> Show </button> */}    
         </li>
     )
 }
@@ -38,8 +38,7 @@ const ListedCountries = ({ countries }) => {
     )
 }
 
-const DisplayCountries = ({ countries, searchQuery }) => {
-    let contirieRuselt = ''
+const DisplayCountries = ({ countries, searchQuery, contirieRuselt }) => {
     const countriesToShow = countries.filter((country) => country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase()))
 
 
@@ -65,6 +64,7 @@ const DisplayCountries = ({ countries, searchQuery }) => {
 const App = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [countries, setCountries] = useState([])
+    const [contirieRuselt, setContirieRuselt] = useState('')
     useEffect(() => {
         axios
             .get('https://studies.cs.helsinki.fi/restcountries/api/all')
@@ -79,6 +79,7 @@ const App = () => {
             <CountrySearch
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                contirieRuselt={contirieRuselt}
             />
             <DisplayCountries
                 countries={countries}
