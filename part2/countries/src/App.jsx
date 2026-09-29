@@ -4,6 +4,10 @@ import axios from "axios"
 import CountrySearch from './components/CountrySearch.jsx'
 
 const CountryInformation  = ({ country }) => {
+    if (country.length === 0) {
+        return null
+    }
+
     return (
         <div id="country-information">
             <h1> {country[0].name.common} </h1>
@@ -18,53 +22,77 @@ const CountryInformation  = ({ country }) => {
     )
 }
 
-const Country = ({ country }) => {
+const Country = ({ country, setSearchQuery }) => {
+    const handleShowCountryButton = (country) => {
+        setSearchQuery(country.name.common)
+        
+    }
     return (
         <li>
-            {country.name.common}
-            {/* <button onClick={() => }> Show </button> */}    
+            {country.name.common}{" "}
+            <button onClick={() => handleShowCountryButton(country)}> Show </button>
         </li>
     )
 }
 
-const ListedCountries = ({ countries }) => {
+const ListedCountries = ({ countries, setSearchQuery }) => {
+
+    const country = (country) => {
+        return (
+            <Country
+                key={country.cca3}
+                country={country}
+                setSearchQuery={setSearchQuery}
+            />
+        )
+    }
+    if (countries){
+        return (
+            <div id="listed-counties">
+                <ol>
+                    {countries.map(country)}
+                </ol>
+            </div>
+        )
+    }
     
-    return (
-        <div id="listed-counties">
-            <ol>
-                {countries.map((country) => <Country key={country.cca3} country={country} />)}
-            </ol>
-        </div>
-    )
 }
 
-const DisplayCountries = ({ countries, searchQuery, contirieRuselt }) => {
-    const countriesToShow = countries.filter((country) => country.name.common.toLowerCase().startsWith(searchQuery.toLowerCase()))
+const DisplayCountries = ({ countries, searchQuery, setSearchQuery }) => {
+    const exactMatch = countries.filter(
+        (c) => c.name.common.toLowerCase() == searchQuery.trim().toLowerCase()
+    )
+    const countriesToShow = 
+        exactMatch.length === 1
+        ? exactMatch
+        : countries.filter((country) =>
+            country.name.common
+            .toLowerCase()
+            .startsWith(searchQuery.toLowerCase())
+        )
 
-
-
-    if (countriesToShow.length > 10){
-        contirieRuselt = <p> 'Too many matches, specify a nother filter' </p>
+    if (searchQuery === ''){
+        return null
+    } else if (countriesToShow.length > 10){
+        return <p> 'Too many matches, specify a nother filter' </p>
+    } else if (countriesToShow.length === 0) {
+        return <p> No matches for {searchQuery}. </p>
     } else if (countriesToShow.length > 1) {
-        contirieRuselt = <ListedCountries countries={countriesToShow} />
-    } else if (countriesToShow.length < 1) {
-        contirieRuselt = <p> No matches for {searchQuery}. </p>
+        return <ListedCountries countries={countriesToShow} setSearchQuery={setSearchQuery} />
     } else if (countriesToShow[0].name.common.toLowerCase() === 'israel') {
-        contirieRuselt = <p> Wtf thier no such country {searchQuery}. </p>
-    } else {
-        contirieRuselt = <CountryInformation country={countriesToShow} />
+        return <p> Wtf thier no such country {searchQuery}. </p>
     }
     return (
-        <div id="display-countries">
-            {searchQuery === '' ? '' : contirieRuselt}
-        </div>
+        <CountryInformation
+            country={countriesToShow}
+        />
     )
 }
 
 const App = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [countries, setCountries] = useState([])
-    const [contirieRuselt, setContirieRuselt] = useState('')
+
     useEffect(() => {
         axios
             .get('https://studies.cs.helsinki.fi/restcountries/api/all')
@@ -79,11 +107,11 @@ const App = () => {
             <CountrySearch
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-                contirieRuselt={contirieRuselt}
             />
             <DisplayCountries
                 countries={countries}
                 searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
             />
         </div>
     )
