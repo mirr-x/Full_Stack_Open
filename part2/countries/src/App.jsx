@@ -30,7 +30,7 @@ const App = () => {
         <div id="app">
             <CountrySearch
                 searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
+                onChange={setSearchQuery}
             />
             <DisplayCountries
                 countries={countries}
