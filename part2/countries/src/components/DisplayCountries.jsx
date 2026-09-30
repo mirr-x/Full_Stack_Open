@@ -1,70 +1,23 @@
-const CountryInformation  = ({ country }) => {
-    if (country.length === 0) {
-        return null
-    }
+import CountryInformation from './CountryInformation.jsx'
+import ListedCountries from './ListedCountries.jsx'
 
-    return (
-        <div id="country-information">
-            <h1> {country[0].name.common} </h1>
-            <p> Capital : {country[0].capital[0]} </p>
-            <p> Area : {country[0].area} </p>
-            <h2> Languages:  </h2>
-            <ol>
-                {Object.entries(country[0].languages).map((language) => <li key={language[0]}> {language[1]} </li>)}
-            </ol>
-            <img src={country[0].flags['png']} alt="counrty Flag img"></img>
-            
-        </div>
+const findCountries = (countries, searchQuery) => {
+    const normalizedQuery = searchQuery.trim().toLowerCase()
+    const exactMatch = countries.filter(
+        (country) => country.name.common.toLowerCase() === normalizedQuery
     )
-}
 
-const Country = ({ country, setSearchQuery }) => {
-    const handleShowCountryButton = (country) => {
-        setSearchQuery(country.name.common)
+    if (exactMatch.length === 1) {
+        return exactMatch
     }
-    return (
-        <li>
-            {country.name.common}{" "}
-            <button onClick={() => handleShowCountryButton(country)}> Show </button>
-        </li>
+
+    return countries.filter((country) =>
+        country.name.common.toLowerCase().startsWith(normalizedQuery)
     )
-}
-
-const ListedCountries = ({ countries, setSearchQuery }) => {
-
-    const country = (country) => {
-        return (
-            <Country
-                key={country.cca3}
-                country={country}
-                setSearchQuery={setSearchQuery}
-            />
-        )
-    }
-    if (countries){
-        return (
-            <div id="listed-counties">
-                <ol>
-                    {countries.map(country)}
-                </ol>
-            </div>
-        )
-    }
-    
 }
 
 const DisplayCountries = ({ countries, searchQuery, setSearchQuery }) => {
-    const exactMatch = countries.filter(
-        (c) => c.name.common.toLowerCase() == searchQuery.trim().toLowerCase()
-    )
-    const countriesToShow = 
-        exactMatch.length === 1
-        ? exactMatch
-        : countries.filter((country) =>
-            country.name.common
-            .toLowerCase()
-            .startsWith(searchQuery.toLowerCase())
-        )
+    const countriesToShow = findCountries(countries, searchQuery)
 
     if (searchQuery === ''){
         return null
