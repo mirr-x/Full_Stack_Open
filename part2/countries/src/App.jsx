@@ -1,20 +1,17 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
 
 import CountrySearch from './components/CountrySearch.jsx'
 import DisplayCountries from './components/DisplayCountries.jsx'
+import countryService from './services/countries.js'
 
 const App = () => {
     const [searchQuery, setSearchQuery] = useState('')
     const [countries, setCountries] = useState([])
 
     useEffect(() => {
-        axios
-            .get('https://studies.cs.helsinki.fi/restcountries/api/all')
-            .then((res) => {
-                setCountries(res.data)
-                console.log(res.data)
-            })
+        countryService
+            .getAll()
+            .then((countries) => setCountries(countries))
     }, [])
 
     return (
