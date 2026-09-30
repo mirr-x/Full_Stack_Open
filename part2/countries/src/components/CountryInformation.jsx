@@ -4,7 +4,6 @@ const CountryInformation = ({ country }) => {
     if (country.length === 0) {
         return null
     }
-    const capital = null;
 
     return (
         <div id="country-information">
@@ -17,7 +16,7 @@ const CountryInformation = ({ country }) => {
             </ol>
             <img src={country[0]?.flags?.png} alt="counrty Flag img"></img>
             <WeatherCard
-                counrty={country[0]?.capital?.[0]}
+                country={country[0]?.capital?.[0]}
             />
         </div>
     )

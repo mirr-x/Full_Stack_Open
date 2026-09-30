@@ -2,18 +2,26 @@ import { useEffect, useState } from "react"
 
 import weatherApi from "../services/weather.js"
 
-const WeatherCard = (city) => {
+const WeatherCard = ({ country }) => {
     const [weather, setWeather] = useState({});
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        if (!country) {
+            return
+        }
+
         weatherApi
-            .get(city['counrty'])
+            .get(country)
             .then((res) => setWeather(res))
-            .catch((err) => setError("Weather failed to fetch noooooooo"))
+            .catch(() => setError("Weather failed to fetch"))
             .finally(() => setLoading(false))
-    }, [city])
+    }, [country])
+
+        if (!country) {
+            return null
+        }
 
     if (loading) {
         return <p>Loading the Weather...</p>
@@ -39,10 +47,10 @@ const WeatherCard = (city) => {
 
     return (
         <div id="weather-card">
-            <h2> Weather in {city['counrty']} </h2>
+            <h2> Weather in {country} </h2>
             <p> Temperature {weather?.main?.temp} Celsius</p>
             <img
-                src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                src={`https://openweathermap.org/img/wn/${weather?.weather?.[0]?.icon}@2x.png`}
                 alt={weather?.weather?.[0]?.description ?? "no avaliable"}
             ></img>
             <p> Wind {weather?.wind?.speed} m/s</p>
