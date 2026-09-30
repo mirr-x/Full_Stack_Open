@@ -65,9 +65,9 @@ const CountryInformation = ({ country }) => {
             <p> Area : {country[0]?.area} </p>
             <h2> Languages:  </h2>
             <ol>
-                {Object.entries(country[0].languages).map((language) => <li key={language[0]}> {language[1]} </li>)}
+                {Object.entries(country[0]?.languages ?? {}).map((language) => <li key={language[0]}> {language[1]} </li>)}
             </ol>
-            <img src={country[0]?.flags['png']} alt="counrty Flag img"></img>
+            <img src={country[0]?.flags?.png} alt="counrty Flag img"></img>
             <WeatherCard
                 counrty={country[0]?.capital?.[0]}
             />
