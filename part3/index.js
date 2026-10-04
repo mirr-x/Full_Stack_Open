@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express()
 
-const data = [
+const persons = [
     { 
       "id": "1",
       "name": "Arto Hellas", 
@@ -24,9 +24,24 @@ const data = [
     }
 ]
 
+app.get('/', (req, res) => {
+    res.send(`
+        <p> Welcome to the Home Page </p>
+    `)
+})
+
 app.get('/api/persons', (req, res) => {
-    res.json(data)
+    res.json(persons)
 });
+
+app.get('/info', (req, res) => {
+    const timeNow = new Date()
+    res.send(`
+        <p> Phonebook ha info for ${persons.length} people </p>
+        <p> ${timeNow} </p>
+    `)
+});
+
 
 app.listen(3001,
     console.log("server is runing")
