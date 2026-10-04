@@ -28,4 +28,6 @@ app.get('/api/persons', (req, res) => {
     res.json(data)
 });
 
-app.listen(3001)
+app.listen(3001,
+    console.log("server is runing")
+)
