@@ -72,7 +72,7 @@ app.post("/api/persons", (req, res) => {
     console.log(body)
 
     if (!body.name || !body.number) {
-        return res.status(400).end()
+        return res.status(400).json({"error": "name or number is missing"})
     }
 
     const person = {
