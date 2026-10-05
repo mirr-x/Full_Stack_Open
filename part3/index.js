@@ -69,10 +69,14 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post("/api/persons", (req, res) => {
     const body = req.body
-    console.log(body)
 
     if (!body.name || !body.number) {
-        return res.status(400).json({"error": "name or number is missing"})
+        return res.status(400).json({error: "name or number is missing"})
+    }
+    const name_already_exist = persons.findIndex((p) => p.name === body.name)
+    console.log(persons)
+    if (name_already_exist !== -1) {
+        res.status(400).json({error: "name must be unique"})
     }
 
     const person = {
