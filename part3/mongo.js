@@ -6,36 +6,52 @@ function add_new_user_to_db(name_, number_, PhoneBookModel) {
         number: number_
     })
     phoneBook.save()
-            .then((ruselt) => {
-                console.log(ruselt)
-                console.log(`✅ added ${name_} number ${number_} to phonebook`)
-                mongoose.connection.close() 
-            })
-            .catch((err) => {
-                const cleanMessage = err.message;
-                console.error(`❌ Failed of adding new Document: ${cleanMessage}`);
-                mongoose.connection.close() 
-                process.exit(1); 
-            });
+        .then((ruselt) => {
+            console.log(ruselt)
+            console.log(`✅ added ${name_} number ${number_} to phonebook`)
+        })
+        .catch((err) => {
+            console.error(`❌ Failed of adding new Document: ${err.message}`);
+            process.exit(1);
+        })
+        .finally(() => {
+            mongoose.connection.close()
+        })
 }
+
+function display_all_db(PhoneBookModel) {
+    PhoneBookModel.find({})
+        .then((rus) => {
+            console.log(rus)
+            console.log(`✅ Dispaly full phonebook`)
+        })
+        .catch((err) => {
+            console.error(`❌ Failed of adding new Document: ${err.message}`);
+            process.exit(1);
+        })
+        .finally(() => {
+            mongoose.connection.close()
+        })
+}
+
 const argv = process.argv
 
 if (argv.length === 3 || argv.length == 5) {
     const password = argv[2]
     const URI_STRING = `mongodb+srv://open_full_stack:${password}@cluster0.1ftmfcd.mongodb.net/?appName=Cluster0`
-    
+
     const name = argv[3]
     const number = argv[4]
 
-    mongoose.connect(URI_STRING, {family: 4})
-            .then(() => {
-                console.log('✅ Connected to MongoDB')
-            })
-            .catch((err) => {
-                const cleanMessage = err.message;
-                console.error(`❌ Connection Failed of auth: ${cleanMessage}`);
-                process.exit(1); 
-            });
+    mongoose.connect(URI_STRING, { family: 4 })
+        .then(() => {
+            console.log('✅ Connected to MongoDB')
+        })
+        .catch((err) => {
+            const cleanMessage = err.message;
+            console.error(`❌ Connection Failed of auth: ${cleanMessage}`);
+            process.exit(1);
+        });
     const phoneBookSchema = new mongoose.Schema({
         name: String,
         number: String
