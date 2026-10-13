@@ -7,8 +7,7 @@ function add_new_user_to_db(name_, number_, PhoneBookModel) {
     })
     phoneBook.save()
         .then((ruselt) => {
-            console.log(ruselt)
-            console.log(`✅ added ${name_} number ${number_} to phonebook`)
+            console.log(`✅ added ${ruselt.name} number ${ruselt.number} to phonebook`)
         })
         .catch((err) => {
             console.error(`❌ Failed of adding new Document: ${err.message}`);
@@ -22,7 +21,9 @@ function add_new_user_to_db(name_, number_, PhoneBookModel) {
 function display_all_db(PhoneBookModel) {
     PhoneBookModel.find({})
         .then((rus) => {
-            console.log(rus)
+            rus.forEach((item) => {
+                console.log(`${item.name} ${item.number}`)
+            });
             console.log(`✅ Dispaly full phonebook`)
         })
         .catch((err) => {
@@ -60,6 +61,7 @@ if (argv.length === 3 || argv.length == 5) {
     if (argv.length == 5) {
         add_new_user_to_db(name, number, PhoneBookModel);
     } else if (argv.length == 3) {
+        display_all_db(PhoneBookModel);
         console.log('only password provided, fetching all users from phonebook');
     }
 } else {
