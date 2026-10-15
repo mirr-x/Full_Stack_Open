@@ -9,4 +9,6 @@ mongoose.connect(url, {family: 4})
     })
     .catch((err) => {
         console.log(`error connecting to MongoDB ${err.message}`)
+        process.exit(1)
     })
+
