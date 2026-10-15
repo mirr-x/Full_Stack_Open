@@ -12,3 +12,9 @@ mongoose.connect(url, {family: 4})
         process.exit(1)
     })
 
+const Person = new mongoose.Schema({
+    name: String,
+    number: String
+})
+
+Person.set
