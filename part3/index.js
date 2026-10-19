@@ -27,7 +27,7 @@ app.get('/api/persons', (req, res) => {
             res.json(persons)
         })
         .catch((err) => {
-            res.json({error: `Failed Displaying persons: ${err.message}`})
+            res.json({ error: `Failed Displaying persons: ${err.message}` })
         })
 });
 
@@ -41,53 +41,61 @@ app.get('/info', (req, res) => {
             `)
         })
         .catch((err) => {
-            res.json({error: `Failed geting persons length: ${err.message}`})
+            res.json({ error: `Failed geting persons length: ${err.message}` })
         })
-    
+
 });
 
+
+// fix this one 
 app.get('/api/persons/:id', (req, res) => {
     const ide = req.params.id
-    const index = persons.findIndex((p) => p.id === ide)
-
-    if (index !== -1){
-        res.json(persons[index])
-    } else {
-        res.status(404).end()
-    }
+    // findById
+    Person.findById(ide)
+        .then((person) =>{
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).json({error: 'person not found in db'})
+            }
+        })
+        .catch((err) => {
+            res.json({ error: `Failed retrving person by id: ${err.message}` })
+        })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
     const id_ = req.params.id
-    const index = persons.findIndex((p) => p.id === id_)
-
-    if (index !== -1) {
-        persons.splice(index, 1)
-        res.status(204).end()
-    } else {
-        res.status(404).end()
-    }
+    Person.findByIdAndDelete(id_)
+        .then((person) => {
+            res.status(200).json({message: `${person.name} successfully deleted`})
+        })
+        .catch((err) => {
+            res.status(404).json({error: 'deleting failed from db'})
+        })
 })
 
 app.post("/api/persons", (req, res) => {
     const body = req.body
 
     if (!body.name || !body.number) {
-        return res.status(400).json({error: "name or number is missing"})
-    }
-    const name_already_exist = Person.exists({name: body.name})
-    if (name_already_exist !== -1) {
-        res.status(400).json({error: "name must be unique"})
+        return res.status(400).json({ error: "name or number is missing" })
     }
 
-    const person = {
-        id: String(Math.floor(Math.random() * 1000000)),
-        name: body.name,
-        number: body.number
-    }
+    Person.exists({ name: body.name })
+        .then((personExists) => {
+            if (personExists) {
+                return res.status(400).json({ error: "name must be unique" })
+            }
 
-    persons.push(person)
-    res.json(person)
+            Person.create({
+                name: body.name,
+                number: body.number
+            }).then((person) => {
+                return res.json(person)
+            })
+        })
+
 })
 
 const PORT = process.env.PORT || 3001
