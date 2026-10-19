@@ -47,10 +47,8 @@ app.get('/info', (req, res) => {
 });
 
 
-// fix this one 
 app.get('/api/persons/:id', (req, res) => {
     const ide = req.params.id
-    // findById
     Person.findById(ide)
         .then((person) =>{
             if (person) {
