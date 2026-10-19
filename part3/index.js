@@ -1,5 +1,6 @@
 const express = require('express');
-const morgan = require('morgan')
+const morgan = require('morgan');
+const Person = require('./models/person.js')
 // const cors = require('cors')
 
 const app = express()
@@ -13,26 +14,6 @@ morgan.token('body', (req) => {
 })
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-const persons = [
-    { 
-        "id": "1",
-        "name": "Arto Hellas", 
-        "number": "040-123456"
-    },
-    { 
-        "id": "2",
-        "name": "Ada Lovelace", 
-        "number": "39-44-5323523"
-    },
-    { 
-        "id": "3",
-        "name": "Dan Abramov", 
-        "number": "12-43-234345"
-    },
-    { 
-Z
-    }
-]
 
 app.get('/', (req, res) => {
     res.send(`
@@ -41,15 +22,28 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({})
+        .then((persons) => {
+            res.json(persons)
+        })
+        .catch((err) => {
+            res.json({error: `Failed Displaying persons: ${err.message}`})
+        })
 });
 
 app.get('/info', (req, res) => {
     const timeNow = new Date()
-    res.send(`
-        <p> Phonebook ha info for ${persons.length} people </p>
-        <p> ${timeNow} </p>
-    `)
+    Person.countDocuments({})
+        .then((length_) => {
+            res.send(`
+                <p> Phonebook ha info for ${length_} people </p>
+                <p> ${timeNow} </p>
+            `)
+        })
+        .catch((err) => {
+            res.json({error: `Failed geting persons length: ${err.message}`})
+        })
+    
 });
 
 app.get('/api/persons/:id', (req, res) => {
@@ -81,8 +75,7 @@ app.post("/api/persons", (req, res) => {
     if (!body.name || !body.number) {
         return res.status(400).json({error: "name or number is missing"})
     }
-    const name_already_exist = persons.findIndex((p) => p.name === body.name)
-    console.log(persons)
+    const name_already_exist = Person.exists({name: body.name})
     if (name_already_exist !== -1) {
         res.status(400).json({error: "name must be unique"})
     }
