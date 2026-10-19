@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 const url = process.env.MONGODB_URI
 
-console.log('connecting to', url)
 mongoose.connect(url, {family: 4})
     .then((rus) => {
         console.log('connected to MongoDB')
@@ -12,9 +14,16 @@ mongoose.connect(url, {family: 4})
         process.exit(1)
     })
 
-const Person = new mongoose.Schema({
+const personSchema = new mongoose.Schema({
     name: String,
     number: String
 })
 
-Person.set
+// personSchema.set('toJson', {
+//     transform: (doc, retObj) => {
+//         retObj.id = retObj._id.toString()
+//         delete retObj.
+//     }
+// })
+
+module.exports = mongoose.model('Persons', personSchema)
