@@ -93,8 +93,14 @@ app.post("/api/persons", (req, res) => {
                 return res.json(person)
             })
         })
+        .catch((err) => {
+            res.status(400).json({error: 'adding new person failed'})
+        })
 
 })
+
+// update person add the rout here
+
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT,
