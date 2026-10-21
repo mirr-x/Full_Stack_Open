@@ -3,6 +3,31 @@ const morgan = require('morgan');
 const Person = require('./models/person.js')
 // const cors = require('cors')
 
+function handleMongoosError(error, res) {
+    console.error("Database Error:", error);
+
+  if (error.name === 'ValidationError') {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Validation failed", 
+      details: error.message 
+    });
+  }
+
+  // 2. If the ID format is completely broken
+  if (error.name === 'CastError') {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Invalid ID format provided" 
+    });
+  }
+
+  // 3. Fallback for unexpected server or connection failures
+  return res.status(500).json({ 
+    success: false, 
+    message: "Internal server error" 
+  });
+}
 const app = express()
 
 // app.use(cors({origin: 'http://localhost:5173'}))
@@ -41,11 +66,10 @@ app.get('/info', (req, res) => {
             `)
         })
         .catch((err) => {
-            res.json({ error: `Failed geting persons length: ${err.message}` })
+            handleMongoosError(err, res)
         })
 
 });
-
 
 app.get('/api/persons/:id', (req, res) => {
     const ide = req.params.id
@@ -58,7 +82,7 @@ app.get('/api/persons/:id', (req, res) => {
             }
         })
         .catch((err) => {
-            res.json({ error: `Failed retrving person by id: ${err.message}` })
+            handleMongoosError(err, res)
         })
 })
 
@@ -69,7 +93,7 @@ app.delete('/api/persons/:id', (req, res) => {
             res.status(200).json({message: `${person.name} successfully deleted`})
         })
         .catch((err) => {
-            res.status(404).json({error: 'deleting failed from db'})
+            handleMongoosError(err, res)
         })
 })
 
@@ -83,7 +107,7 @@ app.post("/api/persons", (req, res) => {
     Person.exists({ name: body.name })
         .then((personExists) => {
             if (personExists) {
-                return res.status(400).json({ error: "name must be unique" })
+                return res.status(400).json({ warning: "name must be unique" })
             }
 
             Person.create({
@@ -94,13 +118,33 @@ app.post("/api/persons", (req, res) => {
             })
         })
         .catch((err) => {
-            res.status(400).json({error: 'adding new person failed'})
+            handleMongoosError(err, res)
         })
 
 })
 
-// update person add the rout here
+app.put('/api/persons/:id', (req, res) => {
+    const body = req.body
+    const id_ = req.params.id
 
+    if (!body.name || !body.number) {
+        return res.status(400).json({ error: "name or number is missing" })
+    }
+
+    Person.findByIdAndUpdate(
+        id_,
+        { $set: {name: body.name, number: body.number} },
+        { new: true, runValidators: true }
+    )
+    .then((newPerson) => {
+        if (!newPerson) {
+            return res.status(404).json({warning: 'person not found'})
+        }
+    })
+    .catch((err) => {
+        handleMongoosError(err, res)
+    })
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT,
