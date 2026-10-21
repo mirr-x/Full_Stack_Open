@@ -134,12 +134,13 @@ app.put('/api/persons/:id', (req, res) => {
     Person.findByIdAndUpdate(
         id_,
         { $set: {name: body.name, number: body.number} },
-        { new: true, runValidators: true }
+        { returnDocument: 'after', runValidators: true }
     )
-    .then((newPerson) => {
-        if (!newPerson) {
+    .then((updatedPerson) => {
+        if (!updatedPerson) {
             return res.status(404).json({warning: 'person not found'})
         }
+        res.json(updatedPerson)
     })
     .catch((err) => {
         handleMongoosError(err, res)
